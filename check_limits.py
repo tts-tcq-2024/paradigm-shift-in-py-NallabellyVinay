@@ -40,13 +40,13 @@ def file_reporter(message):
 
 # Testing
 if __name__ == '__main__':
-    # Using console reporter
+
     monitor = BatteryMonitor(console_reporter)
 
-    assert(monitor.battery_is_ok(25, 70, 0.7) is True)  # All within range
-    assert(monitor.battery_is_ok(50, 70, 0.7) is False) # Temperature too high
-    assert(monitor.battery_is_ok(25, 85, 0.7) is False) # SOC too high
-    assert(monitor.battery_is_ok(25, 70, 0.9) is False) # Charge rate too high
-    assert(monitor.battery_is_ok(-5, 15, 0.9) is False) # Temperature too low, SOC too low, Charge rate too high
+    assert(monitor.battery_is_ok(25, 70, 0.7) is True)  
+    assert(monitor.battery_is_ok(50, 70, 0.7) is False)
+    assert(monitor.battery_is_ok(25, 85, 0.7) is False) 
+    assert(monitor.battery_is_ok(25, 70, 0.9) is False) 
+    assert(monitor.battery_is_ok(-5, 15, 0.9) is False)
 
     print('All tests passed (maybe!)')
