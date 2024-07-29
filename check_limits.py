@@ -60,7 +60,7 @@ def file_reporter(message):
     with open('battery_report.txt', 'a') as f:
         f.write(message + '\n')
 
-# Testing
+
 if __name__ == '__main__':
     monitor = BatteryMonitor(console_reporter)
 
@@ -70,6 +70,6 @@ if __name__ == '__main__':
     assert(monitor.battery_is_ok(25, 70, 0.9) is False)
     assert(monitor.battery_is_ok(-5, 15, 0.9) is False)
 
-    monitor.battery_is_ok(2, 22, 0.75)  # This should trigger warnings
+    monitor.battery_is_ok(2, 22, 0.75)  
 
     print('All tests passed (maybe!)')
