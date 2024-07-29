@@ -1,41 +1,41 @@
 class BatteryMonitor:
     def __init__(self, reporter):
         self.reporter = reporter
+        self.temperature_warning_tolerance = 45 * 0.05
+        self.soc_warning_tolerance = 80 * 0.05
+        self.charge_rate_warning_tolerance = 0.8 * 0.05
 
     def check_temperature(self, temperature):
-        warning_tolerance = 45 * 0.05
         if temperature < 0:
             self.reporter('Temperature too low!')
             return False
-        elif 0 <= temperature < 0 + warning_tolerance:
+        if temperature >= 0 and temperature < 0 + self.temperature_warning_tolerance:
             self.reporter('Warning: Temperature approaching low limit')
-        elif temperature > 45:
+        if temperature > 45:
             self.reporter('Temperature too high!')
             return False
-        elif 45 - warning_tolerance < temperature <= 45:
+        if temperature > 45 - self.temperature_warning_tolerance:
             self.reporter('Warning: Temperature approaching high limit')
         return True
 
     def check_soc(self, soc):
-        warning_tolerance = 80 * 0.05
         if soc < 20:
             self.reporter('State of Charge too low!')
             return False
-        elif 20 <= soc < 20 + warning_tolerance:
+        if soc >= 20 and soc < 20 + self.soc_warning_tolerance:
             self.reporter('Warning: Approaching discharge')
-        elif soc > 80:
+        if soc > 80:
             self.reporter('State of Charge too high!')
             return False
-        elif 80 - warning_tolerance < soc <= 80:
+        if soc > 80 - self.soc_warning_tolerance:
             self.reporter('Warning: Approaching charge-peak')
         return True
 
     def check_charge_rate(self, charge_rate):
-        warning_tolerance = 0.8 * 0.05
         if charge_rate > 0.8:
             self.reporter('Charge rate too high!')
             return False
-        elif 0.8 - warning_tolerance < charge_rate <= 0.8:
+        if charge_rate > 0.8 - self.charge_rate_warning_tolerance:
             self.reporter('Warning: Charge rate approaching high limit')
         return True
 
