@@ -33,14 +33,10 @@ class BatteryMonitor:
         return self.messages[self.language][key]
 
     def check_temperature(self, temperature):
-        if not self.check_breach(temperature, 0, 'low_temp', 'low_temp_warning', 45, 'high_temp', 'high_temp_warning', 2.25):
-            return False
-        return True
+        return self.check_breach(temperature, 0, 45, 2.25, 'low_temp', 'low_temp_warning', 'high_temp', 'high_temp_warning')
 
     def check_soc(self, soc):
-        if not self.check_breach(soc, 20, 'low_soc', 'low_soc_warning', 80, 'high_soc', 'high_soc_warning', 4):
-            return False
-        return True
+        return self.check_breach(soc, 20, 80, 4, 'low_soc', 'low_soc_warning', 'high_soc', 'high_soc_warning')
 
     def check_charge_rate(self, charge_rate):
         if charge_rate > 0.8:
@@ -50,18 +46,29 @@ class BatteryMonitor:
             self.reporter(self.get_message('high_charge_rate_warning'))
         return True
 
-    def check_breach(self, value, lower_limit, low_breach_msg, low_warning_msg, upper_limit, high_breach_msg, high_warning_msg, tolerance):
+    def check_breach(self, value, lower_limit, upper_limit, tolerance, low_breach_msg, low_warning_msg, high_breach_msg, high_warning_msg):
         if value < lower_limit:
             self.reporter(self.get_message(low_breach_msg))
             return False
-        elif value < lower_limit + tolerance:
-            self.reporter(self.get_message(low_warning_msg))
-        elif value > upper_limit:
+        if self.check_warning(value, lower_limit, tolerance, low_warning_msg):
+            return True
+        if value > upper_limit:
             self.reporter(self.get_message(high_breach_msg))
             return False
-        elif value > upper_limit - tolerance:
-            self.reporter(self.get_message(high_warning_msg))
+        if self.check_warning(value, upper_limit, tolerance, high_warning_msg, upper=True):
+            return True
         return True
+
+    def check_warning(self, value, limit, tolerance, warning_msg, upper=False):
+        if not upper:
+            if value < limit + tolerance:
+                self.reporter(self.get_message(warning_msg))
+                return True
+        else:
+            if value > limit - tolerance:
+                self.reporter(self.get_message(warning_msg))
+                return True
+        return False
 
     def battery_is_ok(self, temperature, soc, charge_rate):
         return (self.check_temperature(temperature) and
