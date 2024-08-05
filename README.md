@@ -57,3 +57,38 @@ Shorten the Semantic distance
 - Functional to express relation between input and output
 - Object oriented to encapsulate state with actions
 - Apect oriented to capture repeating aspects
+
+
+
+# Battery Monitor
+
+A simple Python class to monitor battery parameters such as temperature, state of charge (SoC), and charge rate. The class provides methods to check if these parameters are within safe limits and report any issues.
+
+## Features
+
+- **Temperature Monitoring**: Ensures the battery temperature is within the safe range of 0°C to 45°C.
+- **State of Charge (SoC) Monitoring**: Ensures the battery's state of charge is within the safe range of 20% to 80%.
+- **Charge Rate Monitoring**: Ensures the battery's charge rate does not exceed 0.8C.
+- **Early Warnings**: Provides warnings when parameters are approaching their limits with a 5% tolerance.
+
+## Usage
+
+To use the `BatteryMonitor` class, you need to provide a reporter function that handles the messages. Two example reporters are provided: `console_reporter` (prints messages to the console) and `file_reporter` (writes messages to a file).
+
+### Example
+
+```python
+from battery_monitor import BatteryMonitor, console_reporter
+
+# Create a BatteryMonitor instance with the console reporter
+monitor = BatteryMonitor(console_reporter)
+
+# Check battery parameters
+monitor.battery_is_ok(25, 70, 0.7)
+monitor.battery_is_ok(50, 70, 0.7)
+monitor.battery_is_ok(25, 85, 0.7)
+monitor.battery_is_ok(25, 70, 0.9)
+monitor.battery_is_ok(-5, 15, 0.9)
+
+# Test warnings
+monitor.battery_is_ok(2, 22, 0.75)
