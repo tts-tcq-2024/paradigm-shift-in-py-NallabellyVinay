@@ -33,29 +33,13 @@ class BatteryMonitor:
         return self.messages[self.language][key]
 
     def check_temperature(self, temperature):
-        if temperature < 0:
-            self.reporter(self.get_message('low_temp'))
+        if not self.check_breach(temperature, 0, 'low_temp', 'low_temp_warning', 45, 'high_temp', 'high_temp_warning', 2.25):
             return False
-        elif temperature < 0 + 2.25:
-            self.reporter(self.get_message('low_temp_warning'))
-        elif temperature > 45:
-            self.reporter(self.get_message('high_temp'))
-            return False
-        elif temperature > 45 - 2.25:
-            self.reporter(self.get_message('high_temp_warning'))
         return True
 
     def check_soc(self, soc):
-        if soc < 20:
-            self.reporter(self.get_message('low_soc'))
+        if not self.check_breach(soc, 20, 'low_soc', 'low_soc_warning', 80, 'high_soc', 'high_soc_warning', 4):
             return False
-        elif soc < 20 + 4:
-            self.reporter(self.get_message('low_soc_warning'))
-        elif soc > 80:
-            self.reporter(self.get_message('high_soc'))
-            return False
-        elif soc > 80 - 4:
-            self.reporter(self.get_message('high_soc_warning'))
         return True
 
     def check_charge_rate(self, charge_rate):
@@ -64,6 +48,19 @@ class BatteryMonitor:
             return False
         elif charge_rate > 0.8 - 0.04:
             self.reporter(self.get_message('high_charge_rate_warning'))
+        return True
+
+    def check_breach(self, value, lower_limit, low_breach_msg, low_warning_msg, upper_limit, high_breach_msg, high_warning_msg, tolerance):
+        if value < lower_limit:
+            self.reporter(self.get_message(low_breach_msg))
+            return False
+        elif value < lower_limit + tolerance:
+            self.reporter(self.get_message(low_warning_msg))
+        elif value > upper_limit:
+            self.reporter(self.get_message(high_breach_msg))
+            return False
+        elif value > upper_limit - tolerance:
+            self.reporter(self.get_message(high_warning_msg))
         return True
 
     def battery_is_ok(self, temperature, soc, charge_rate):
